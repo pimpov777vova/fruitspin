@@ -21,6 +21,19 @@
             gap: 10px;
             font-size: 50px;
             margin-bottom: 20px;
+            min-height: 60px;
+        }
+        .slot {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            font-size: 50px;
+            background: white;
+            border-radius: 10px;
+            color: black;
+            line-height: 60px;
+            font-weight: bold;
         }
         .balance {
             margin-bottom: 20px;
@@ -36,7 +49,11 @@
 </head>
 <body>
     <h1>🎰 Fruit Spin 🎰</h1>
-    <div class="slot-machine" id="slots">🍒 🍋 🍉</div>
+    <div class="slot-machine" id="slots">
+        <div class="slot">🍒</div>
+        <div class="slot">🍋</div>
+        <div class="slot">🍉</div>
+    </div>
     <div class="balance" id="balance">Баланс: 100 монет</div>
     <div class="buttons">
         <button onclick="spin()">Крутить 🎰</button>
@@ -54,14 +71,30 @@
             balance -= 10;
             updateBalance();
 
-            let slots = document.getElementById('slots');
-            let result = [
-                fruits[Math.floor(Math.random() * fruits.length)],
-                fruits[Math.floor(Math.random() * fruits.length)],
-                fruits[Math.floor(Math.random() * fruits.length)]
-            ];
-            slots.innerText = result.join(' ');
+            let slots = document.querySelectorAll('.slot');
+            let result = [];
 
+            let spins = 10;
+            let interval = setInterval(() => {
+                slots.forEach(slot => {
+                    let randomFruit = fruits[Math.floor(Math.random() * fruits.length)];
+                    slot.innerText = randomFruit;
+                });
+                spins--;
+                if (spins <= 0) {
+                    clearInterval(interval);
+                    result = [
+                        fruits[Math.floor(Math.random() * fruits.length)],
+                        fruits[Math.floor(Math.random() * fruits.length)],
+                        fruits[Math.floor(Math.random() * fruits.length)]
+                    ];
+                    slots.forEach((slot, index) => slot.innerText = result[index]);
+                    checkWin(result);
+                }
+            }, 100);
+        }
+
+        function checkWin(result) {
             let win = 0;
             if (result[0] === result[1] && result[1] === result[2]) {
                 win = 50;
